@@ -58,26 +58,25 @@ module.exports = {
       { $addToSet: { friends: req.body } },
       { runValidators: true, new: true }
     )
-    .then((friend) =>
+      .then((friend) =>
         !friend
           ? res.status(404).json({ message: 'No video with this id!' })
           : res.json(friend)
       )
       .catch((err) => res.status(500).json(err));
-  }, 
+  },
   //DELETE to remove a friend from a user's friend list
   removeFriend(req, res) {
     User.findOneAndUpdate(
       { _id: req.params.userId },
-      { $pull: { friends: { friendsId: req.params.friendId }}}, //may be wrong
+      { $pull: { friends: { friendsId: req.params.friendId } } }, //may be wrong
       { runValidators: true, new: true }
-      )
+    )
       .then((friend) =>
         !friend
-          ? res.status(404).json({ message: 'No user with that ID' })
+          ? res.status(404).json({ message: 'No user with thais id' })
           : res.json(friend)
       )
-      .then(() => res.json({ message: 'User and associated apps deleted!' }))
       .catch((err) => res.status(500).json(err));
   },
 };
