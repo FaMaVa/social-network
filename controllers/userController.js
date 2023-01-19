@@ -52,7 +52,7 @@ module.exports = {
       .catch((err) => res.status(500).json(err));
   },
   //POST to add a new friend to a user's friend list
-  createFriend(req, res) {
+  addFriend(req, res) {
     User.findByIdAndUpdate(
       { _id: req.params.userId },
       { $addToSet: { friends: req.body } },
