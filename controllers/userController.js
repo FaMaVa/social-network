@@ -55,9 +55,10 @@ module.exports = {
   addFriend(req, res) {
     User.findByIdAndUpdate(
       { _id: req.params.userId },
-      { $addToSet: { friends: req.body } },
-      { runValidators: true, new: true }
+      { $push: { friends: req.params.friendId } },
+      { new: true }
     )
+      .populate({ path: 'friends', select: ('-__v') })
       .then((friend) =>
         !friend
           ? res.status(404).json({ message: 'No video with this id!' })
@@ -69,7 +70,7 @@ module.exports = {
   removeFriend(req, res) {
     User.findOneAndUpdate(
       { _id: req.params.userId },
-      { $pull: { friends: { friendsId: req.params.friendId } } }, //may be wrong
+      { $pull: { friends: req.params.friendId } }, //may be wrong
       { runValidators: true, new: true }
     )
       .then((friend) =>

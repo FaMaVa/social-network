@@ -12,20 +12,18 @@ const userSchema = new Schema(
             type: String,
             required: true,
             match: [
-                /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-                "Please use a valid email address",
-            ],
+                /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/, "Must be an email address!"],
             unique: true
         },
         thoughts: [
             {
-                type: Schema.Typrs.ObjectId,
+                type: Schema.Types.ObjectId,
                 ref: 'thought',
             }
         ],
         friends: [
             {
-                type: Schema.Typrs.ObjectId,
+                type: Schema.Types.ObjectId,
                 ref: 'user',
             }
         ],

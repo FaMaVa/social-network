@@ -1,4 +1,4 @@
-const { User, Thought} = require('../models');
+const { User, Thought } = require('../models');
 
 module.exports = {
     //GET to get all thoughts
@@ -10,28 +10,28 @@ module.exports = {
     //GET to get a single thought by its _id
     getSingleThought(req, res) {
         Thought.findOne({ _id: req.params.thoughtId })
-            .select('__v')
-            .then((thought) =>
-                !thought
-                    ? res.status(404).json({ message: 'No user with this id' })
-                    : res.json(thought)
-            )
-            .catch((err) => res.status(500).json(err));
-    },
+          .select('-__v')
+          .then((thought) =>
+            !thought
+              ? res.status(404).json({ message: 'No thought with that ID' })
+              : res.json(thought)
+          )
+          .catch((err) => res.status(500).json(err));
+      },
     //POST to create a new thought (don't forget to push the created thought's _id to the associated user's thoughts array field)
     createThought(req, res) {
         Thought.create(req.body)
-            .then(({ _id }) => {
+            .then((thought) => {
                 return User.findOneAndUpdate(
-                    { _id: req.body.userId },
-                    { $push: { thoughts: _id } },
+                    { _id: req.params.userId },
+                    { $push: { thoughts: thought._id } },
                     { new: true }
                 );
             })
-            .then((thought) =>
-                !thought
-                    ? res.status(404).json({ message: 'No user with this id' })
-                    : res.json(thought)
+            .then((user) =>
+                !user
+                    ? res.status(404).json({ message: 'Thought was not created' })
+                    : res.json(user)
             )
             .catch((err) => res.status(500).json(err));
     },
@@ -57,7 +57,7 @@ module.exports = {
                     ? res.status(404).json({ message: 'No user with this id' })
                     : User.findOneAndUpdate(
                         { thoughts: req.params.thoughtId },
-                        { $pull: { thoughts: req.params.thoughId } },
+                        { $pull: { thoughts: req.params.thoughtId } },
                         { new: true }
                     )
             )
@@ -73,7 +73,7 @@ module.exports = {
         Thought.findByIdAndUpdate(
             { _id: req.params.thoughtId },
             { $addToSet: { reactions: req.body } },
-            { runValidators: true, new: true }
+            { new: true }
         )
             .then((reaction) =>
                 !reaction
@@ -86,7 +86,7 @@ module.exports = {
     removeReaction(req, res) {
         Thought.findByIdAndUpdate(
             { _id: req.params.thoughtId },
-            { $pull: { reactions: { reactionsId: req.params.reactionId } } }, //may be wrong
+            { $pull: { reactions: { reactionId: req.params.reactionId } } }, //may be wrong
             { runValidators: true, new: true }
         )
             .then((reaction) =>
